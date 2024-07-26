@@ -1,5 +1,5 @@
 export type Lead = {
-	id: string;
+	id: number;
 	isSelected: boolean;
 	firstName: string;
 	lastName: string;

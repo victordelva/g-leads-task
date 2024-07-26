@@ -103,3 +103,10 @@ button:focus-visible {
 .card {
   padding: 2em;
 }
+
+.bg-glass {
+  background: rgba(255, 255, 255, 0.2); /* Fondo semitransparente */
+  backdrop-filter: blur(10px); /* Desenfoque */
+  -webkit-backdrop-filter: blur(10px); /* Desenfoque para navegadores webkit */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Borde blanco semitransparente */
+}

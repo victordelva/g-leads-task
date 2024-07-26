@@ -5,12 +5,16 @@ import {checkboxColumn, DataSheetGrid, keyColumn, textColumn} from "react-datash
 import 'react-datasheet-grid/dist/style.css';
 import {selectColumn} from "./DataGrid/Select/selectColumn.ts";
 import {Lead} from "../../types/Lead.ts";
+import LeadsActionsBar from "./LeadsActionsBar.tsx";
+import {Button} from "../atoms/Button.tsx";
+import {useUIMessages} from "../../UIProvider.tsx";
 
 export const LeadsList: FC = () => {
   const [ leadsData, setLeadsData ] = useState<Lead[]>([]);
   const [ allSelected, setAllSelected ] = useState<boolean>(false);
+  const { showLoading, hideLoading, showAlert } = useUIMessages();
 
-  const countSelected = leadsData.filter((lead) => lead.isSelected).length;
+  const selectedLeads = leadsData.filter((lead) => lead.isSelected);
 
   const columns = [
     {
@@ -48,6 +52,7 @@ export const LeadsList: FC = () => {
       ...keyColumn(
         'countryCode',
         selectColumn({
+          // todo include file with all country codes
           choices: (["UK", "DE", "ES", "IN"])?.map((data) => {
             return {
               value: data,
@@ -65,17 +70,15 @@ export const LeadsList: FC = () => {
     queryFn: async () => api.leads.getMany(),
   });
 
-  console.log(leadsData);
-
   useEffect(() => {
     setLeadsData((leads.data ?? []) as unknown as Lead[]);
   }, [leads.data]);
 
   useEffect(() => {
-    if (allSelected === true) {
-      setLeadsData((leadsData ?? []).map((lead) => ({ ...lead, isSelected: true })));
+    if (allSelected) {
+      setLeadsData((l) => (l ?? []).map((lead) => ({ ...lead, isSelected: true })));
     } else {
-      setLeadsData((leadsData ?? []).map((lead) => ({ ...lead, isSelected: false })));
+      setLeadsData((l) => (l ?? []).map((lead) => ({ ...lead, isSelected: false })));
     }
   }, [allSelected]);
 
@@ -95,17 +98,36 @@ export const LeadsList: FC = () => {
     setLeadsData(dataChanged as unknown as Lead[]);
   };
 
+  const onDelete = () => {
+    showLoading();
+    showAlert({ message: `Deleting ${selectedLeads.length} leads...` });
+    const deleteAll = async () => {
+      await Promise.all(selectedLeads.map(async (lead) => {
+        await api.leads.delete({id :lead.id});
+      }));
+    }
+    deleteAll().then(() => {
+      setLeadsData((l) => l.filter((lead) => !lead.isSelected));
+      hideLoading();
+    }).catch((e) => console.log(e));
+  }
+
   return (
     <div>
       <h2 className="lead-list-title">All leads</h2>
       <p>
         <code>POST</code> <code>/leads</code>
       </p>
-      <div className="w-full">
-        <div>
-          {countSelected} selecionados
-        </div>
-      </div>
+      <LeadsActionsBar
+        label={`Selected ${selectedLeads.length} of ${leadsData.length}`}
+        actions={
+          <>
+            <Button onClick={onDelete}>
+              Delete
+            </Button>
+          </>
+        }
+      />
       <DataSheetGrid
         value={leadsData}
         columns={columns}

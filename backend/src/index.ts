@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client'
-import express, { Request, Response } from 'express'
+import express, { Request, Response } from 'express';
+import {DeleteLeadUseCase} from "./contexts/leads/Application/DeleteLeadUseCase";
+import {LeadRepositoryImpl} from "./contexts/leads/Infrastructure/Repositories/LeadRepositoryImpl";
 const prisma = new PrismaClient()
 const app = express()
 app.use(express.json())
@@ -7,6 +9,7 @@ app.use(express.json())
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   next()
 })
 
@@ -58,11 +61,9 @@ app.patch('/leads/:id', async (req: Request, res: Response) => {
 
 app.delete('/leads/:id', async (req: Request, res: Response) => {
   const { id } = req.params
-  await prisma.lead.delete({
-    where: {
-      id: Number(id),
-    },
-  })
+  // I would implement dependency injection
+  const deleteLeadUseCase = new DeleteLeadUseCase(new LeadRepositoryImpl());
+  await deleteLeadUseCase.execute(id);
   res.json()
 })
 
