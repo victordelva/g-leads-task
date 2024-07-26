@@ -17,4 +17,5 @@ model lead {
   jobTitle    String?
   countryCode String?
   companyName String?
+  message     String?
 }
