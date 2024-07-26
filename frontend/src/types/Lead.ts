@@ -3,6 +3,9 @@ export type Lead = {
 	isSelected: boolean;
 	firstName: string;
 	lastName: string;
-	countryCode: string;
-	email: string;
+	countryCode?: string;
+	email?: string;
+	companyName?: string;
+	gender?: string;
+	message?: string;
 }

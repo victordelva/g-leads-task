@@ -8,11 +8,13 @@ import {Lead} from "../../types/Lead.ts";
 import LeadsActionsBar from "./LeadsActionsBar.tsx";
 import {Button} from "../atoms/Button.tsx";
 import {useUIMessages} from "../../UIProvider.tsx";
+import MessageGenerationModal from "./MessageGeneration/MessageGenerationModal.tsx";
 
 export const LeadsList: FC = () => {
   const [ leadsData, setLeadsData ] = useState<Lead[]>([]);
   const [ allSelected, setAllSelected ] = useState<boolean | null>(null);
   const { showLoading, hideLoading, showAlert, showPopUp, hidePopUp } = useUIMessages();
+  const [showMessageModal, setShowMessageModal] = useState(false);
 
   const selectedLeads = leadsData.filter((lead) => lead.isSelected);
 
@@ -130,7 +132,6 @@ export const LeadsList: FC = () => {
       )
     })
   }
-
   const onDelete = () => {
     showLoading();
     showAlert({ message: `Deleting ${selectedLeads.length} leads...` });
@@ -148,13 +149,20 @@ export const LeadsList: FC = () => {
   return (
     <div>
       <h2 className="lead-list-title">All leads</h2>
-      <p>
-        <code>POST</code> <code>/leads</code>
-      </p>
+      <MessageGenerationModal
+        isActive={showMessageModal}
+        leads={selectedLeads}
+        onClose={() => setShowMessageModal(false)}
+      />
       <LeadsActionsBar
         label={`Selected ${selectedLeads.length} of ${leadsData.length}`}
         actions={
           <>
+            <Button
+              disabled={selectedLeads.length === 0}
+              onClick={() => setShowMessageModal(true)}>
+              Generate message
+            </Button>
             <Button
               disabled={selectedLeads.length === 0}
               onClick={onConfirmDelete}>
