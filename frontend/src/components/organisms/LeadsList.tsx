@@ -11,8 +11,8 @@ import {useUIMessages} from "../../UIProvider.tsx";
 
 export const LeadsList: FC = () => {
   const [ leadsData, setLeadsData ] = useState<Lead[]>([]);
-  const [ allSelected, setAllSelected ] = useState<boolean>(false);
-  const { showLoading, hideLoading, showAlert } = useUIMessages();
+  const [ allSelected, setAllSelected ] = useState<boolean | null>(null);
+  const { showLoading, hideLoading, showAlert, showPopUp, hidePopUp } = useUIMessages();
 
   const selectedLeads = leadsData.filter((lead) => lead.isSelected);
 
@@ -77,9 +77,11 @@ export const LeadsList: FC = () => {
   useEffect(() => {
     if (allSelected) {
       setLeadsData((l) => (l ?? []).map((lead) => ({ ...lead, isSelected: true })));
-    } else {
+    }
+    if (allSelected === false){
       setLeadsData((l) => (l ?? []).map((lead) => ({ ...lead, isSelected: false })));
     }
+    setTimeout(() => setAllSelected(null), 100);
   }, [allSelected]);
 
 
@@ -97,6 +99,37 @@ export const LeadsList: FC = () => {
   ) => {
     setLeadsData(dataChanged as unknown as Lead[]);
   };
+
+  const onConfirmDelete = () => {
+    showPopUp({
+      title: `Are you sure you want to delete ${selectedLeads.length} leads`,
+      content: (
+        <>
+          <div className="my-4">
+            You can not undo this action
+          </div>
+          <div className="gap-2 flex">
+            <Button
+              className="min-w-20"
+              variant={'danger'}
+              onClick={() => {
+                onDelete();
+                hidePopUp();
+              }
+            }>
+              Yes
+            </Button>
+            <Button
+              className="min-w-20"
+              onClick={hidePopUp}
+            >
+              Cancel
+            </Button>
+          </div>
+        </>
+      )
+    })
+  }
 
   const onDelete = () => {
     showLoading();
@@ -124,7 +157,7 @@ export const LeadsList: FC = () => {
           <>
             <Button
               disabled={selectedLeads.length === 0}
-              onClick={onDelete}>
+              onClick={onConfirmDelete}>
               Delete
             </Button>
           </>
