@@ -122,7 +122,9 @@ export const LeadsList: FC = () => {
         label={`Selected ${selectedLeads.length} of ${leadsData.length}`}
         actions={
           <>
-            <Button onClick={onDelete}>
+            <Button
+              disabled={selectedLeads.length === 0}
+              onClick={onDelete}>
               Delete
             </Button>
           </>
