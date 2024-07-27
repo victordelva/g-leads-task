@@ -13,7 +13,7 @@ export default function LeadsActionsBar({
 				<div>
 					{label}
 				</div>
-				<div>
+				<div className="flex gap-2">
 					{actions}
 				</div>
 			</div>

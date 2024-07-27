@@ -8,12 +8,12 @@ interface ValidationLead {
 	invalidFields: string[];
 }
 
-interface Validation {
+export interface LeadValidation {
 	leads: ValidationLead[];
 	areAllValid: boolean;
 }
 
-export function validateLeadsFields(leads: Lead[], template: string): Validation {
+export function validateLeadsFields(leads: Lead[], template: string): LeadValidation {
 	const templateFields = extractTemplateFields(template);
 	console.log(templateFields);
 	const validations: ValidationLead[] = [];
@@ -31,7 +31,7 @@ export function validateLeadsFields(leads: Lead[], template: string): Validation
 	return {
 		leads: validations,
 		areAllValid: validations.every(lead => lead.isValid),
-	} as Validation;
+	} as LeadValidation;
 }
 
 function extractTemplateFields(messageTemplate: string): string[] {

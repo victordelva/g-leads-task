@@ -1,8 +1,13 @@
 import {Lead} from "../../../types/Lead.ts";
-import {useState} from "react";
+import {useEffect, useState } from "react";
 import CloseIcon from "../../atoms/CloseSvg.tsx";
-import {validateLeadsFields} from "./validateLeadAndTemplate.ts";
+import {LeadValidation, validateLeadsFields} from "./validateLeadAndTemplate.ts";
 import {Button} from "../../atoms/Button.tsx";
+import {api} from "../../../api";
+import {useUIMessages} from "../../../UIProvider.tsx";
+import LoadingSvg from "../../atoms/LoadingSvg.tsx";
+import GreenCheckSvg from "../../atoms/GreenCheckSvg.tsx";
+import RedXSvg from "../../atoms/RedXSvg.tsx";
 
 export default function MessageGenerationModal({
 	isActive,
@@ -16,8 +21,35 @@ export default function MessageGenerationModal({
 	const [messageTemplate, setMessageTemplate] = useState(`Hi {firstName}, I'm doing a survey. 
 Who would you rate working in {companyName} as {gender} on a scale of 1-10?
 `);
+	const [validation, setValidation] = useState<LeadValidation | undefined>();
+	const {showLoading, hideLoading, showAlert} = useUIMessages();
+	const [loadingValidation, setLoadingValidation] = useState(false);
 
-	const validation = validateLeadsFields(leads, messageTemplate);
+	useEffect(() => {
+		setLoadingValidation(true);
+		const interval = setInterval(() => {
+			const validationData = validateLeadsFields(leads, messageTemplate);
+			setValidation(validationData);
+			setLoadingValidation(false);
+		}, 2000);
+
+		return () => clearInterval(interval);
+	}, [messageTemplate, leads]);
+
+	const onGenerateMessage = async () => {
+		showLoading();
+		showAlert({
+			message: "Generating messages...",
+		});
+		await Promise.all((validation?.leads||[]).map(async (lead) => {
+			let message = '';
+			if (lead.isValid) {
+				message = messageTemplate.replace(/{([a-zA-Z]+)}/g, (_, key) => lead[key]);
+			}
+			await api.leads.update({id: lead.leadId, message });
+		}));
+		hideLoading();
+	}
 
 	return (
 		<>
@@ -35,9 +67,24 @@ Who would you rate working in {companyName} as {gender} on a scale of 1-10?
 								<CloseIcon />
 							</div>
 						</div>
-						<div className="px-2 mt-2 text-xl">
-							Message template
+						<div className="flex justify-between items-center w-full">
+							<div className="px-2 mt-2 text-xl">
+								Message template
+							</div>
+							{loadingValidation ? (
+								<LoadingSvg className="w-4 h-4 my-0 mr-2" />
+							): (
+								<>
+									{validation?.areAllValid && (
+										<GreenCheckSvg className="mr-2" />
+									)}
+									{validation?.areAllValid === false && (
+										<RedXSvg  className="mr-2" />
+									)}
+								</>
+							)}
 						</div>
+
 						<div className="p-2">
 							<textarea
 								value={messageTemplate}
@@ -46,33 +93,39 @@ Who would you rate working in {companyName} as {gender} on a scale of 1-10?
 							>
 							</textarea>
 							<div className="mt-2">
-								{validation.areAllValid ? (
-									<div className="text-blue-600">
-										All leads message will be generated correctly
-									</div>
-								) : (
-									<div>
-										<div className="underline my-4 text-red-800">
-											Some leads doesn't have the correct data. So, their message will be empty
-										</div>
-										<ol className="list-decimal pl-8">
-											{validation.leads.filter(l => !l.isValid).map((lead) => (
-												<li key={lead.leadId}>
-													{lead.firstName} {lead.lastName} has the following invalid fields: {" "}
-													<pre>
+								{validation && !loadingValidation && (
+									<>
+										{validation?.areAllValid && (
+											<div className="text-blue-600">
+												All leads message will be generated correctly
+											</div>
+										)}
+										{validation?.areAllValid === false && (
+											<div>
+												<div className="underline my-4 text-red-800">
+													Some leads doesn't have the correct data. So, their message will be empty
+												</div>
+												<ol className="list-decimal pl-8">
+													{validation?.leads.filter(l => !l.isValid).map((lead) => (
+														<li key={lead.leadId}>
+															{lead.firstName} {lead.lastName} has the following invalid fields: {" "}
+															<pre>
 														{lead.invalidFields.join(', ')}
 													</pre>
-												</li>
-											))}
-										</ol>
-									</div>
+														</li>
+													))}
+												</ol>
+											</div>
+										)}
+
+									</>
 								)}
 								<div className="mt-6">
 									<Button
-										disabled={!messageTemplate}
-										onClick={() => console.log("generate")}
+										disabled={!messageTemplate || loadingValidation}
+										onClick={onGenerateMessage}
 									>
-										{validation.areAllValid ? "Generate message" : "Generate message anyway"}
+										{validation?.areAllValid ? "Generate message" : "Generate message anyway"}
 									</Button>
 									<Button
 										className="mt-2"

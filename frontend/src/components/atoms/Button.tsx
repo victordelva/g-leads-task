@@ -11,7 +11,7 @@ export function Button({ onClick, children, disabled, variant = 'primary', class
 	return (
 		<div
 			className={classNames(
-				"border border-gray-400 bg-white rounded-xl px-4 py-1 font-semibold text-center",
+				"border border-gray-400 rounded-xl px-4 py-1 font-semibold text-center",
 				{
 					"opacity-50 cursor-not-allowed": disabled,
 					"cursor-pointer hover:border-gray-900": !disabled,
