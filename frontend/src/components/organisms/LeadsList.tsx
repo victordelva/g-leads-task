@@ -51,6 +51,16 @@ export const LeadsList: FC = () => {
       disabled: true,
     },
     {
+      ...keyColumn('message', textColumn),
+      title: 'Message',
+      minWidth: 300,
+    },
+    {
+      ...keyColumn('companyName', textColumn),
+      title: 'Company Name',
+      disabled: true,
+    },
+    {
       ...keyColumn(
         'countryCode',
         selectColumn({
@@ -64,6 +74,7 @@ export const LeadsList: FC = () => {
         }),
       ),
       title: "Country",
+      disabled: true,
     },
   ];
 

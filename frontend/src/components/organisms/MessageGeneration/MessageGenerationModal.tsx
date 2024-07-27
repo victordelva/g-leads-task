@@ -46,7 +46,7 @@ Who would you rate working in {companyName} as {gender} on a scale of 1-10?
 			if (lead.isValid) {
 				message = messageTemplate.replace(/{([a-zA-Z]+)}/g, (_, key) => lead[key]);
 			}
-			await api.leads.update({id: lead.leadId, message });
+			await api.leads.updateSome({id: lead.leadId, message });
 		}));
 		hideLoading();
 	}

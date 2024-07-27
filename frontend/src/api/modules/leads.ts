@@ -10,5 +10,6 @@ export const leadsApi = {
   getOne: endpoint<LeadsGetOneOutput, LeadsGetOneInput>('get', ({ id }) => `/leads/${id}`),
   create: endpoint<LeadsCreateOutput, LeadsCreateInput>('post', '/leads'),
   delete: endpoint<LeadsDeleteOutput, LeadsDeleteInput>('delete', ({ id }) => `/leads/${id}`),
-  update: endpoint<LeadsUpdateOutput, LeadsUpdateInput>('put', ({ id }) => `/leads/${id}`),
+  // update: endpoint<LeadsUpdateOutput, LeadsUpdateInput>('put', ({ id }) => `/leads/${id}`),
+  updateSome: endpoint<LeadsUpdateOutput, LeadsUpdateInput>('patch', ({ id }) => `/leads/${id}`),
 } as const satisfies ApiModule

@@ -9,7 +9,7 @@ app.use(express.json())
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
   next()
 })
 
@@ -46,15 +46,18 @@ app.get('/leads', async (req: Request, res: Response) => {
 
 app.patch('/leads/:id', async (req: Request, res: Response) => {
   const { id } = req.params
-  const { name, email } = req.body
+  const { name, email, message } = req.body;
+  const data: { firstName?: string; email?: string; message?: string } = {};
+
+  if (name) data.firstName = String(name);
+  if (email) data.email = String(email);
+  if (message) data.message = String(message);
+
   const lead = await prisma.lead.update({
     where: {
       id: Number(id),
     },
-    data: {
-      firstName: String(name),
-      email: String(email),
-    },
+    data,
   })
   res.json(lead)
 })
