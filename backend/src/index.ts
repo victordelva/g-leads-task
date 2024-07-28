@@ -2,6 +2,9 @@ import { PrismaClient } from '@prisma/client'
 import express, { Request, Response } from 'express';
 import {DeleteLeadUseCase} from "./contexts/leads/Application/DeleteLeadUseCase";
 import {LeadRepositoryImpl} from "./contexts/leads/Infrastructure/Repositories/LeadRepositoryImpl";
+import {UpdateLeadUseCase} from "./contexts/leads/Application/UpdateLeadUseCase";
+import {GuessLeadGenderUseCase} from "./contexts/leads/Application/GuessLeadGenderUseCase";
+import {GenderGuesserServiceImpl} from "./contexts/leads/Infrastructure/Services/GenderGuesserServiceImpl";
 const prisma = new PrismaClient()
 const app = express()
 app.use(express.json())
@@ -46,19 +49,13 @@ app.get('/leads', async (req: Request, res: Response) => {
 
 app.patch('/leads/:id', async (req: Request, res: Response) => {
   const { id } = req.params
-  const { name, email, message } = req.body;
-  const data: { firstName?: string; email?: string; message?: string } = {};
-
-  if (name) data.firstName = String(name);
-  if (email) data.email = String(email);
-  if (message) data.message = String(message);
-
-  const lead = await prisma.lead.update({
-    where: {
-      id: Number(id),
-    },
-    data,
-  })
+  const { message, gender } = req.body;
+  const updateLeadUseCase = new UpdateLeadUseCase(new LeadRepositoryImpl());
+  const lead = await updateLeadUseCase.execute({
+    id,
+    message: message ?? undefined,
+    gender: gender ?? undefined,
+  });
   res.json(lead)
 })
 
@@ -68,7 +65,22 @@ app.delete('/leads/:id', async (req: Request, res: Response) => {
   const deleteLeadUseCase = new DeleteLeadUseCase(new LeadRepositoryImpl());
   await deleteLeadUseCase.execute(id);
   res.json()
-})
+});
+
+app.put('/leads/:id/guess-gender', async (req: Request, res: Response) => {
+  const {
+    id,
+  } = req.params;
+
+  const guessGenderUseCase = new GuessLeadGenderUseCase(
+    new LeadRepositoryImpl(),
+    new GenderGuesserServiceImpl(),
+    );
+
+  const lead = await guessGenderUseCase.execute({id});
+
+  res.json(lead);
+});
 
 app.listen(4000, () => {
   console.log('Express server is running on port 4000')

@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.17.0",
+    "detect-gender": "^1.0.0",
     "express": "^4.19.2"
   }
 }

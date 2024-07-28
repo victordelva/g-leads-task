@@ -15,7 +15,6 @@ export interface LeadValidation {
 
 export function validateLeadsFields(leads: Lead[], template: string): LeadValidation {
 	const templateFields = extractTemplateFields(template);
-	console.log(templateFields);
 	const validations: ValidationLead[] = [];
 	leads.forEach(lead => {
 		const invalidFields = extractInvalidFields(lead, templateFields);

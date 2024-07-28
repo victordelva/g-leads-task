@@ -9,11 +9,12 @@ import LeadsActionsBar from "./LeadsActionsBar.tsx";
 import {Button} from "../atoms/Button.tsx";
 import {useUIMessages} from "../../UIProvider.tsx";
 import MessageGenerationModal from "./MessageGeneration/MessageGenerationModal.tsx";
+import {capitalize} from "lodash";
 
 export const LeadsList: FC = () => {
   const [ leadsData, setLeadsData ] = useState<Lead[]>([]);
   const [ allSelected, setAllSelected ] = useState<boolean | null>(null);
-  const { showLoading, hideLoading, showAlert, showPopUp, hidePopUp } = useUIMessages();
+  const { showLoading, hideLoading, showAlert, hideAlert, showPopUp, hidePopUp } = useUIMessages();
   const [showMessageModal, setShowMessageModal] = useState(false);
 
   const selectedLeads = leadsData.filter((lead) => lead.isSelected);
@@ -49,6 +50,22 @@ export const LeadsList: FC = () => {
       ...keyColumn('lastName', textColumn),
       title: 'Last Name',
       disabled: true,
+    },
+    {
+    ...keyColumn(
+        'gender',
+        selectColumn({
+          choices: (["female", "male"])?.map((data) => {
+            return {
+              value: data,
+              label: capitalize(data),
+            };
+          }),
+        }),
+      ),
+      title: "Gender",
+      disabled: true,
+      minWidth: 160,
     },
     {
       ...keyColumn('message', textColumn),
@@ -103,12 +120,6 @@ export const LeadsList: FC = () => {
 
   const onChange = (
     dataChanged: Record<string, Lead>[],
-    /** operation: {
-      fromRowIndex: number;
-      toRowIndex: number;
-      type: 'CREATE' | 'UPDATE' | 'DELETE';
-    }[],
-      */
   ) => {
     setLeadsData(dataChanged as unknown as Lead[]);
   };
@@ -164,6 +175,18 @@ export const LeadsList: FC = () => {
     hideLoading();
   }
 
+  const onGuessGender = async () => {
+    showLoading();
+    showAlert({ message: `Guessing gender for ${selectedLeads.length} leads` });
+    await Promise.all(selectedLeads.map(async (lead) => {
+      await api.leads.guessGender({id: lead.id});
+    }));
+    await leads.refetch();
+    hideAlert();
+    hideLoading();
+    showAlert({ message: `Gender guessed for ${selectedLeads.length} leads` });
+  }
+
   return (
     <div>
       <h2 className="lead-list-title">All leads</h2>
@@ -176,6 +199,11 @@ export const LeadsList: FC = () => {
         label={`Selected ${selectedLeads.length} of ${leadsData.length}`}
         actions={
           <>
+            <Button
+              disabled={selectedLeads.length === 0}
+              onClick={onGuessGender}>
+              Guess gender
+            </Button>
             <Button
               disabled={selectedLeads.length === 0}
               onClick={() => setShowMessageModal(true)}>

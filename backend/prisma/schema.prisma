@@ -18,4 +18,5 @@ model lead {
   countryCode String?
   companyName String?
   message     String?
+  gender      String?
 }
