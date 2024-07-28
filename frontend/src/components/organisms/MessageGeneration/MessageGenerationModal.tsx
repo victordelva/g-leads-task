@@ -41,14 +41,19 @@ Who would you rate working in {companyName} as {gender} on a scale of 1-10?
 		showAlert({
 			message: "Generating messages...",
 		});
-		await Promise.all((validation?.leads||[]).map(async (lead) => {
+		await Promise.all((validation?.leads||[]).map(async (leadValidation) => {
 			let message = '';
-			if (lead.isValid) {
-				message = messageTemplate.replace(/{([a-zA-Z]+)}/g, (_, key) => lead[key]);
+			const leadData = leads.find(l => l.id === leadValidation.leadId);
+			if (leadValidation.isValid && leadData) {
+				message = messageTemplate
+					.replace(/{([a-zA-Z]+)}/g, (_, key: keyof Lead) => {
+						return typeof leadData[key] === 'string' ? leadData[key] : '';
+					});
 			}
-			await api.leads.updateSome({id: lead.leadId, message });
+			await api.leads.updateSome({id: leadValidation.leadId, message });
 		}));
 		hideLoading();
+		onClose();
 	}
 
 	return (

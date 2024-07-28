@@ -157,13 +157,20 @@ export const LeadsList: FC = () => {
     }).catch((e) => console.log(e));
   }
 
+  const onCloseMessageGeneration = async () => {
+    setShowMessageModal(false);
+    showLoading();
+    await leads.refetch();
+    hideLoading();
+  }
+
   return (
     <div>
       <h2 className="lead-list-title">All leads</h2>
       <MessageGenerationModal
         isActive={showMessageModal}
         leads={selectedLeads}
-        onClose={() => setShowMessageModal(false)}
+        onClose={() => onCloseMessageGeneration()}
       />
       <LeadsActionsBar
         label={`Selected ${selectedLeads.length} of ${leadsData.length}`}
