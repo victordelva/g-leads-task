@@ -1,11 +1,11 @@
 import CloseIcon from '../../components/atoms/CloseSvg.tsx'
 import { ChangeEvent, useEffect, useState } from 'react'
 import { api } from '../../api'
-import { checkboxColumn, DataSheetGrid, keyColumn, textColumn } from 'react-datasheet-grid'
+import { DataSheetGrid, keyColumn, textColumn } from 'react-datasheet-grid'
 import { Button } from '../../components/atoms/Button.tsx'
 import styles from './styles.module.css'
 import { selectColumn } from '../../components/organisms/DataGrid/Select/selectColumn.ts'
-import { capitalize } from 'lodash'
+import { ProcessImportOutput } from '../../api/types/imports/processImport.ts'
 
 const columns = [
   {
@@ -68,23 +68,7 @@ const columns = [
 export default function ImportLeadsModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [fileErrorMessage, setFileErrorMessage] = useState<string | null>(null)
   const [file, setFile] = useState<File | undefined>(undefined)
-  const [fileData, setFileData] = useState<
-    | {
-        isValid: boolean
-        leads: {
-          firstName: string
-          lastName?: string
-          email?: string
-          jobTitle?: string
-          countryCode?: string
-          companyName?: string
-          yearsInRole?: number
-          phoneNumber?: string
-          isValid: boolean
-        }[]
-      }
-    | undefined
-  >(undefined)
+  const [fileData, setFileData] = useState<ProcessImportOutput | undefined>(undefined)
   const onFileAdded = (data: ChangeEvent<HTMLInputElement>) => {
     const fileName = data.target.value
     if (fileName && !/(\.csv)$/i.exec(fileName)) {
@@ -106,7 +90,6 @@ export default function ImportLeadsModal({ isOpen, onClose }: { isOpen: boolean;
     }
     if (file) {
       processCsv(file).then((data) => {
-        console.log(data)
         setFileData(data)
       })
     }
