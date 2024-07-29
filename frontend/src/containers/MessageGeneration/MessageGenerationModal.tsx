@@ -1,20 +1,20 @@
-import { Lead } from '../../../types/Lead.ts'
+import { Lead } from '../../types/Lead.ts'
 import { useEffect, useState } from 'react'
-import CloseIcon from '../../atoms/CloseSvg.tsx'
+import CloseIcon from '../../components/atoms/CloseSvg.tsx'
 import { LeadValidation, validateLeadsFields } from './validateLeadAndTemplate.ts'
-import { Button } from '../../atoms/Button.tsx'
-import { api } from '../../../api'
-import { useUIMessages } from '../../../UIProvider.tsx'
-import LoadingSvg from '../../atoms/LoadingSvg.tsx'
-import GreenCheckSvg from '../../atoms/GreenCheckSvg.tsx'
-import RedXSvg from '../../atoms/RedXSvg.tsx'
+import { Button } from '../../components/atoms/Button.tsx'
+import { api } from '../../api'
+import { useUIMessages } from '../../UIProvider.tsx'
+import LoadingSvg from '../../components/atoms/LoadingSvg.tsx'
+import GreenCheckSvg from '../../components/atoms/GreenCheckSvg.tsx'
+import RedXSvg from '../../components/atoms/RedXSvg.tsx'
 
 export default function MessageGenerationModal({
-  isActive,
+  isOpen,
   leads,
   onClose,
 }: {
-  isActive: boolean
+  isOpen: boolean
   leads: Lead[]
   onClose: () => void
 }) {
@@ -62,7 +62,7 @@ Who would you rate working in {companyName} as {gender} on a scale of 1-10?
 
   return (
     <>
-      {isActive && (
+      {isOpen && (
         <div className="fixed top-0 left-0 w-full h-dvh flex justify-center items-center z-30 bg-glass">
           <div className="max-w-2xl m-auto bg-white w-full min-h-96 max-h-dvh border-2 border-gray-500 rounded-2xl shadow-xl overflow-scroll">
             <div className="flex justify-between p-2">

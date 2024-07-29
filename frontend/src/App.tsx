@@ -1,5 +1,5 @@
 import genesyLogo from './assets/genesy-ai-logo.svg'
-import { LeadsList } from './components/scenes/LeadsList.tsx'
+import { LeadsList } from './containers/LeadsList.tsx'
 
 function App() {
   return (

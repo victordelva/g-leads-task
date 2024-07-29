@@ -1,12 +1,20 @@
 import { PrismaClient } from '@prisma/client'
 import express, { Request, Response } from 'express'
+import multer from 'multer'
 import { DeleteLeadUseCase } from './contexts/leads/Application/DeleteLeadUseCase'
 import { LeadRepositoryImpl } from './contexts/leads/Infrastructure/Repositories/LeadRepositoryImpl'
 import { UpdateLeadUseCase } from './contexts/leads/Application/UpdateLeadUseCase'
 import { GuessLeadGenderUseCase } from './contexts/leads/Application/GuessLeadGenderUseCase'
 import { GenderGuesserServiceImpl } from './contexts/leads/Infrastructure/Services/GenderGuesserServiceImpl'
+import ProcessLeadsCsvUseCase from './contexts/imports/Application/ProcessLeadsCsvUseCase'
+import ImportsRepositoryImpl from './contexts/imports/Infrastructure/Repositories/ImportsRepositoryImpl'
 const prisma = new PrismaClient()
 const app = express()
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage })
+import { parse } from 'csv-parse/sync'
+import CSVParserService from './contexts/imports/Infrastructure/Services/CSVParserService'
+
 app.use(express.json())
 
 app.use(function (req, res, next) {
@@ -78,6 +86,21 @@ app.put('/leads/:id/guess-gender', async (req: Request, res: Response) => {
   const lead = await guessGenderUseCase.execute({ id })
 
   res.json(lead)
+})
+
+app.post('/imports', upload.single('file'), async (req, res) => {
+  const file = req.file
+
+  if (!file) {
+    return res.status(400).json({ message: 'No file uploaded' })
+  }
+
+  const csvData = file.buffer.toString('utf-8')
+
+  const processCsvUseCase = new ProcessLeadsCsvUseCase(new ImportsRepositoryImpl(), new CSVParserService())
+  const result = await processCsvUseCase.execute({ data: csvData })
+
+  res.json(result)
 })
 
 app.listen(4000, () => {

@@ -31,6 +31,12 @@ export function endpoint<Output, Input>(
     if (method === 'get' || method === 'delete') {
       res = await axiosInstance[method](url, { params: body })
     } else {
+      const config: { headers?: object } = {}
+      if (body instanceof FormData) {
+        config.headers = {
+          'Content-Type': 'multipart/form-data',
+        }
+      }
       res = await axiosInstance[method](url, body)
     }
 

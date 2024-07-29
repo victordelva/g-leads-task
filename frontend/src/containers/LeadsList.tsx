@@ -1,21 +1,23 @@
 import { useQuery } from '@tanstack/react-query'
 import { FC, useEffect, useState } from 'react'
-import { api } from '../../api'
+import { api } from '../api'
 import { checkboxColumn, DataSheetGrid, keyColumn, textColumn } from 'react-datasheet-grid'
 import 'react-datasheet-grid/dist/style.css'
-import { selectColumn } from '../organisms/DataGrid/Select/selectColumn.ts'
-import { Lead } from '../../types/Lead.ts'
-import ActionsBar from '../atoms/ActionsBar.tsx'
-import { Button } from '../atoms/Button.tsx'
-import { useUIMessages } from '../../UIProvider.tsx'
+import { selectColumn } from '../components/organisms/DataGrid/Select/selectColumn.ts'
+import { Lead } from '../types/Lead.ts'
+import ActionsBar from '../components/atoms/ActionsBar.tsx'
+import { Button } from '../components/atoms/Button.tsx'
+import { useUIMessages } from '../UIProvider.tsx'
 import MessageGenerationModal from './MessageGeneration/MessageGenerationModal.tsx'
 import { capitalize } from 'lodash'
+import ImportLeadsModal from './ImportLeads/ImportLeadsModal.tsx'
 
 export const LeadsList: FC = () => {
   const [leadsData, setLeadsData] = useState<Lead[]>([])
   const [allSelected, setAllSelected] = useState<boolean | null>(null)
   const { showLoading, hideLoading, showAlert, hideAlert, showPopUp, hidePopUp } = useUIMessages()
   const [showMessageModal, setShowMessageModal] = useState(false)
+  const [showImportLeadsModal, setShowImportLeadsModal] = useState(false)
 
   const selectedLeads = leadsData.filter((lead) => lead.isSelected)
 
@@ -166,6 +168,13 @@ export const LeadsList: FC = () => {
     hideLoading()
   }
 
+  const onCloseImportLeads = async () => {
+    setShowImportLeadsModal(false)
+    showLoading()
+    await leads.refetch()
+    hideLoading()
+  }
+
   const onGuessGender = async () => {
     showLoading()
     showAlert({ message: `Guessing gender for ${selectedLeads.length} leads` })
@@ -185,14 +194,15 @@ export const LeadsList: FC = () => {
       <div className="flex justify-between items-center mb-2">
         <h2 className="lead-list-title">All leads</h2>
         <div>
-          <Button onClick={() => console.log('')}>Import new leads</Button>
+          <Button onClick={() => setShowImportLeadsModal(true)}>Import new leads</Button>
         </div>
       </div>
       <MessageGenerationModal
-        isActive={showMessageModal}
+        isOpen={showMessageModal}
         leads={selectedLeads}
         onClose={() => onCloseMessageGeneration()}
       />
+      <ImportLeadsModal isOpen={showImportLeadsModal} onClose={onCloseImportLeads} />
       <ActionsBar
         label={`Selected ${selectedLeads.length} of ${leadsData.length}`}
         actions={

@@ -1,4 +1,4 @@
-import { Lead } from '../../../types/Lead.ts'
+import { Lead } from '../../types/Lead.ts'
 
 interface ValidationLead {
   leadId: number
