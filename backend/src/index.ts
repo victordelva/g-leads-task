@@ -7,13 +7,16 @@ import { UpdateLeadUseCase } from './contexts/leads/Application/UpdateLeadUseCas
 import { GuessLeadGenderUseCase } from './contexts/leads/Application/GuessLeadGenderUseCase'
 import { GenderGuesserServiceImpl } from './contexts/leads/Infrastructure/Services/GenderGuesserServiceImpl'
 import ProcessLeadsCsvUseCase from './contexts/imports/Application/ProcessLeadsCsvUseCase'
-import ImportsRepositoryImpl from './contexts/imports/Infrastructure/Repositories/ImportsRepositoryImpl'
+import { ImportsRepositoryImpl } from './contexts/imports/Infrastructure/Repositories/ImportsRepositoryImpl'
 const prisma = new PrismaClient()
 const app = express()
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 import { parse } from 'csv-parse/sync'
 import CSVParserService from './contexts/imports/Infrastructure/Services/CSVParserService'
+import ComfirmImportUseCase from './contexts/imports/Application/ConfirmImportUseCase'
+import LeadBusRepository from './contexts/imports/Infrastructure/Repositories/LeadsBusRepository'
+import CreateLeadUseCase from './contexts/leads/Application/CreateLeadUseCase'
 
 app.use(express.json())
 
@@ -101,6 +104,19 @@ app.post('/imports', upload.single('file'), async (req, res) => {
   const result = await processCsvUseCase.execute({ data: csvData })
 
   res.json(result)
+})
+
+app.put('/imports/:id/confirm', async (req: Request, res: Response) => {
+  const { id } = req.params
+
+  const confirmUseCase = new ComfirmImportUseCase(
+    new ImportsRepositoryImpl(),
+    new LeadBusRepository(new CreateLeadUseCase(new LeadRepositoryImpl()))
+  )
+
+  await confirmUseCase.execute({ id })
+
+  res.json()
 })
 
 app.listen(4000, () => {

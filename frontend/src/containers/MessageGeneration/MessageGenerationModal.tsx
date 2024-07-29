@@ -31,7 +31,7 @@ Who would you rate working in {companyName} as {gender} on a scale of 1-10?
       const validationData = validateLeadsFields(leads, messageTemplate)
       setValidation(validationData)
       setLoadingValidation(false)
-    }, 2000)
+    }, 1000)
 
     return () => clearInterval(interval)
   }, [messageTemplate, leads])

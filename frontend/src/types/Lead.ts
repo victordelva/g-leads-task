@@ -8,4 +8,5 @@ export type Lead = {
   companyName?: string
   gender?: string
   message?: string
+  createdAt?: string
 }

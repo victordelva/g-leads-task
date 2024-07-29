@@ -1,5 +1,6 @@
 import { ImportsRepository } from '../Domain/Repositories/ImportsRepository'
 import CSVParserService from '../Infrastructure/Services/CSVParserService'
+import { ImportLeadData } from '../Domain/Model/ImportLeadData'
 
 export type LeadCsvImport = {
   firstName: string
@@ -18,7 +19,7 @@ export default class ProcessLeadsCsvUseCase {
     private csvParserService: CSVParserService
   ) {}
 
-  private isValidLead(lead: any): lead is LeadCsvImport {
+  private isValidLead(lead: any): boolean {
     if (typeof lead.firstName !== 'string' || !lead.firstName.length) return false
     if (lead.lastName && typeof lead.lastName !== 'string') return false
     if (lead.email && typeof lead.email !== 'string') return false
@@ -30,9 +31,9 @@ export default class ProcessLeadsCsvUseCase {
     return true
   }
 
-  private filterDuplicates(leads: LeadCsvImport[]): LeadCsvImport[] {
+  private filterDuplicates(leads: ImportLeadData[]): ImportLeadData[] {
     // Guessing that duplicated leads in database are allowed.
-    const uniqueLeads = new Map<string, LeadCsvImport>()
+    const uniqueLeads = new Map<string, ImportLeadData>()
     leads.forEach((lead) => {
       const key = `${lead.firstName.toLowerCase().trim()}-${lead.lastName?.toLowerCase().trim()}`
       if (!uniqueLeads.has(key)) {
@@ -43,26 +44,27 @@ export default class ProcessLeadsCsvUseCase {
   }
 
   async execute({ data }: { data: string }): Promise<{
-    id: string
-    leads: (LeadCsvImport & {
-      isValid: boolean
-      id: number
-    })[]
+    id: number
+    leads: ImportLeadData[]
   }> {
     let parsed = this.csvParserService.parseCsvData(data) as LeadCsvImport[]
 
     const parsedData = parsed.map((lead, index) => {
-      return { ...lead, isValid: this.isValidLead(lead), id: index + 1 } as LeadCsvImport & {
-        isValid: boolean
-        id: number
-      }
+      return new ImportLeadData({
+        ...lead,
+        countryCode: String(lead.countryCode),
+        phoneNumber: String(lead.phoneNumber),
+        jobTitle: String(lead.jobTitle),
+        isValid: this.isValidLead(lead),
+      })
     })
-    const uniqueLeads = this.filterDuplicates(parsedData)
+
+    const uniqueLeads = this.filterDuplicates(parsedData) as ImportLeadData[]
     const imported = await this.importsRepository.create(uniqueLeads)
 
     return {
       id: imported.id,
-      leads: parsedData,
+      leads: uniqueLeads,
     }
   }
 }

@@ -11,6 +11,7 @@ import { useUIMessages } from '../UIProvider.tsx'
 import MessageGenerationModal from './MessageGeneration/MessageGenerationModal.tsx'
 import { capitalize } from 'lodash'
 import ImportLeadsModal from './ImportLeads/ImportLeadsModal.tsx'
+import countries from '../utils/countries.json'
 
 export const LeadsList: FC = () => {
   const [leadsData, setLeadsData] = useState<Lead[]>([])
@@ -61,7 +62,6 @@ export const LeadsList: FC = () => {
         })
       ),
       title: 'Gender',
-      disabled: true,
       minWidth: 160,
     },
     {
@@ -72,23 +72,37 @@ export const LeadsList: FC = () => {
     {
       ...keyColumn('companyName', textColumn),
       title: 'Company Name',
-      disabled: true,
+      minWidth: 220,
     },
     {
       ...keyColumn(
         'countryCode',
         selectColumn({
-          // todo include file with all country codes
-          choices: ['UK', 'DE', 'ES', 'IN']?.map((data) => {
+          choices: countries.map((data: { code: string; name: string }) => {
             return {
-              value: data,
-              label: data,
+              value: data.code,
+              label: data.name,
             }
           }),
         })
       ),
       title: 'Country',
-      disabled: true,
+      minWidth: 220,
+    },
+    {
+      ...keyColumn('jobTitle', textColumn),
+      title: 'Job Title',
+      minWidth: 220,
+    },
+    {
+      ...keyColumn('email', textColumn),
+      title: 'Email',
+      minWidth: 220,
+    },
+    {
+      ...keyColumn('createdAt', textColumn),
+      title: 'Created at',
+      minWidth: 220,
     },
   ]
 

@@ -47,4 +47,12 @@ export class LeadRepositoryImpl implements LeadRepository {
 
     return Lead.fromPrisma(lead)
   }
+
+  async save(lead: Lead): Promise<void> {
+    await prisma.lead.create({
+      data: {
+        ...lead.toObject(),
+      },
+    })
+  }
 }

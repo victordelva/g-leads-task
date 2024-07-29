@@ -6,6 +6,7 @@ import { Button } from '../../components/atoms/Button.tsx'
 import styles from './styles.module.css'
 import { selectColumn } from '../../components/organisms/DataGrid/Select/selectColumn.ts'
 import { ProcessImportOutput } from '../../api/types/imports/processImport.ts'
+import { useUIMessages } from '../../UIProvider.tsx'
 
 const columns = [
   {
@@ -69,6 +70,9 @@ export default function ImportLeadsModal({ isOpen, onClose }: { isOpen: boolean;
   const [fileErrorMessage, setFileErrorMessage] = useState<string | null>(null)
   const [file, setFile] = useState<File | undefined>(undefined)
   const [fileData, setFileData] = useState<ProcessImportOutput | undefined>(undefined)
+  const { showLoading, hideLoading, showAlert } = useUIMessages()
+  const validLeads = fileData?.leads.filter((lead) => lead.isValid).length ?? 0
+
   const onFileAdded = (data: ChangeEvent<HTMLInputElement>) => {
     const fileName = data.target.value
     if (fileName && !/(\.csv)$/i.exec(fileName)) {
@@ -95,6 +99,25 @@ export default function ImportLeadsModal({ isOpen, onClose }: { isOpen: boolean;
     }
   }, [file])
 
+  const _onClose = () => {
+    setFile(undefined)
+    setFileData(undefined)
+    setFileErrorMessage(null)
+    onClose()
+  }
+
+  const onSave = async () => {
+    showAlert({
+      message: `Importing ${validLeads} leads...`,
+    })
+    showLoading()
+    hideLoading()
+    if (fileData) {
+      await api.imports.confirmImport({ id: fileData?.id })
+    }
+    _onClose()
+  }
+
   return (
     <>
       {isOpen && (
@@ -103,7 +126,7 @@ export default function ImportLeadsModal({ isOpen, onClose }: { isOpen: boolean;
             <div className="max-w-6xl m-auto bg-white w-full min-h-96 max-h-dvh border-2 border-gray-500 rounded-2xl shadow-xl overflow-scroll">
               <div className="flex justify-between p-2">
                 <div className="font-bold text-2xl">Import Leads from CSV</div>
-                <div className={'cursor-pointer'} onClick={onClose}>
+                <div className={'cursor-pointer'} onClick={_onClose}>
                   <CloseIcon />
                 </div>
               </div>
@@ -126,7 +149,6 @@ export default function ImportLeadsModal({ isOpen, onClose }: { isOpen: boolean;
                     <DataSheetGrid
                       value={fileData.leads}
                       columns={columns}
-                      rowKey={'id'}
                       addRowsComponent={false}
                       cellClassName={({ rowData }) => {
                         // @ts-expect-error rowData is unknown on the library
@@ -138,8 +160,8 @@ export default function ImportLeadsModal({ isOpen, onClose }: { isOpen: boolean;
                     ></DataSheetGrid>
                   </div>
                   <div className="m-2 flex justify-end">
-                    <Button className="w-72" onClick={() => console.log('subir')}>
-                      Import
+                    <Button className="w-72" onClick={onSave}>
+                      Import {validLeads} leads
                     </Button>
                   </div>
                 </>

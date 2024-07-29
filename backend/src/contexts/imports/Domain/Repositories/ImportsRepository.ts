@@ -1,5 +1,7 @@
 import Import from '../Model/Import'
+import { ImportLeadData } from '../Model/ImportLeadData'
 
 export interface ImportsRepository {
-  create(data: { [key: string]: string | number | boolean | Date }[]): Promise<Import>
+  create(data: ImportLeadData[]): Promise<Import>
+  get(id: string): Promise<Import>
 }

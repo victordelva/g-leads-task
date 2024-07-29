@@ -5,7 +5,6 @@ export type ProcessImportOutput = {
   leads: {
     isValid: boolean
     leads: {
-      id: string
       firstName: string
       lastName?: string
       email?: string
