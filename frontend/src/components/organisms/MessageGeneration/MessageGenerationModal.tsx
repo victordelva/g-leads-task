@@ -42,7 +42,7 @@ Who would you rate working in {companyName} as {gender} on a scale of 1-10?
 			message: "Generating messages...",
 		});
 		await Promise.all((validation?.leads||[]).map(async (leadValidation) => {
-			let message = '';
+			let message = undefined;
 			const leadData = leads.find(l => l.id === leadValidation.leadId);
 			if (leadValidation.isValid && leadData) {
 				message = messageTemplate
@@ -50,7 +50,10 @@ Who would you rate working in {companyName} as {gender} on a scale of 1-10?
 						return typeof leadData[key] === 'string' ? leadData[key] : '';
 					});
 			}
-			await api.leads.updateSome({id: leadValidation.leadId, message });
+
+			if (message) {
+				await api.leads.updateSome({id: leadValidation.leadId, message });
+			}
 		}));
 		hideLoading();
 		onClose();
