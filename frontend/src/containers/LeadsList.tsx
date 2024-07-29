@@ -176,7 +176,7 @@ export const LeadsList: FC = () => {
         setLeadsData((l) => l.filter((lead) => !lead.isSelected))
         hideLoading()
       })
-      .catch((e) => showAlert({ message: 'Error deleting, try later', type: 'error' }))
+      .catch(() => showAlert({ message: 'Error deleting, try later', type: 'error' }))
   }
 
   const onCloseMessageGeneration = async () => {
