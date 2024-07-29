@@ -11,6 +11,9 @@ export const leadsApi = {
   getOne: endpoint<LeadsGetOneOutput, LeadsGetOneInput>('get', ({ id }) => `/leads/${id}`),
   create: endpoint<LeadsCreateOutput, LeadsCreateInput>('post', '/leads'),
   delete: endpoint<LeadsDeleteOutput, LeadsDeleteInput>('delete', ({ id }) => `/leads/${id}`),
-  guessGender: endpoint<GuessLeadGenderOutput, GuessLeadGenderInput>('put', ({ id }) => `/leads/${id}/guess-gender`),
+  guessGender: endpoint<GuessLeadGenderOutput, GuessLeadGenderInput>(
+    'put',
+    ({ id }) => `/leads/${id}/guess-gender`
+  ),
   updateSome: endpoint<LeadsUpdateSomeOutput, LeadsUpdateSomeInput>('patch', ({ id }) => `/leads/${id}`),
 } as const satisfies ApiModule

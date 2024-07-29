@@ -1,7 +1,7 @@
-import {Lead} from "../../../types/Lead.ts";
+import { Lead } from '../../../types/Lead.ts'
 
 export type GuessLeadGenderInput = {
   id: number
 }
 
-export type GuessLeadGenderOutput = Lead;
+export type GuessLeadGenderOutput = Lead

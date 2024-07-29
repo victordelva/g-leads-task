@@ -6,11 +6,11 @@ function App() {
     <main className="max-w-[1280px] w-full my-0 p-2">
       <div className="flex items-center justify-center w-full text-center">
         <a href="https://genesy.ai" target="_blank">
-          <img src={genesyLogo} className="logo genesy" alt="Genesy AI logo"/>
+          <img src={genesyLogo} className="logo genesy" alt="Genesy AI logo" />
         </a>
         <h1 className="title">Genesy AI</h1>
       </div>
-      <LeadsList/>
+      <LeadsList />
     </main>
   )
 }
