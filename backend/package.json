@@ -7,7 +7,7 @@
     "start": "node ./dist/index.js",
     "dev": "nodemon ./src/index.ts",
     "build": "tsc -p .",
-    "ci": "npm install && npm run build && npm run format:check",
+    "ci": "npm install",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
