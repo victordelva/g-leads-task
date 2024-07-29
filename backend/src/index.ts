@@ -79,7 +79,7 @@ app.patch('/leads/:id', async (req: Request, res: Response) => {
 
 app.delete('/leads/:id', async (req: Request, res: Response) => {
   const { id } = req.params
-  // I would implement dependency injection
+  // I would include a container for the dependency injection
   const deleteLeadUseCase = new DeleteLeadUseCase(new LeadRepositoryImpl())
   await deleteLeadUseCase.execute(id)
   res.json()
