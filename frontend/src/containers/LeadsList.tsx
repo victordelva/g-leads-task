@@ -12,6 +12,7 @@ import MessageGenerationModal from './MessageGeneration/MessageGenerationModal.t
 import { capitalize } from 'lodash'
 import ImportLeadsModal from './ImportLeads/ImportLeadsModal.tsx'
 import countries from '../utils/countries.json'
+import dayjs from 'dayjs'
 
 export const LeadsList: FC = () => {
   const [leadsData, setLeadsData] = useState<Lead[]>([])
@@ -112,7 +113,12 @@ export const LeadsList: FC = () => {
   })
 
   useEffect(() => {
-    setLeadsData((leads.data ?? []) as unknown as Lead[])
+    setLeadsData(
+      ((leads.data ?? []) as unknown as Lead[]).map((lead) => ({
+        ...lead,
+        createdAt: dayjs(lead.createdAt).format('DD-MM-YYYY HH:mm'),
+      }))
+    )
   }, [leads.data])
 
   useEffect(() => {
