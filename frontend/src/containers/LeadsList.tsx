@@ -43,12 +43,10 @@ export const LeadsList: FC = () => {
     {
       ...keyColumn('firstName', textColumn),
       title: 'First Name',
-      disabled: true,
     },
     {
       ...keyColumn('lastName', textColumn),
       title: 'Last Name',
-      disabled: true,
     },
     {
       ...keyColumn(
@@ -178,7 +176,7 @@ export const LeadsList: FC = () => {
         setLeadsData((l) => l.filter((lead) => !lead.isSelected))
         hideLoading()
       })
-      .catch((e) => console.log(e))
+      .catch((e) => showAlert({ message: 'Error deleting, try later', type: 'error' }))
   }
 
   const onCloseMessageGeneration = async () => {

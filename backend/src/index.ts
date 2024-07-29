@@ -60,12 +60,19 @@ app.get('/leads', async (req: Request, res: Response) => {
 
 app.patch('/leads/:id', async (req: Request, res: Response) => {
   const { id } = req.params
-  const { message, gender } = req.body
+  const { message, gender, companyName, countryCode, jobTitle, email, firstName, lastName } = req.body
+
   const updateLeadUseCase = new UpdateLeadUseCase(new LeadRepositoryImpl())
   const lead = await updateLeadUseCase.execute({
     id,
-    message: message ?? undefined,
-    gender: gender ?? undefined,
+    message,
+    gender,
+    companyName,
+    countryCode,
+    jobTitle,
+    email,
+    firstName,
+    lastName,
   })
   res.json(lead)
 })

@@ -52,7 +52,7 @@ Who would you rate working in {companyName} as {gender} on a scale of 1-10?
         }
 
         if (message) {
-          await api.leads.updateSome({ id: leadValidation.leadId, message })
+          await api.leads.updateSome({ ...leadData, id: leadValidation.leadId, message })
         }
       })
     )

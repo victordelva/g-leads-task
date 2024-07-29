@@ -29,14 +29,46 @@ export class LeadRepositoryImpl implements LeadRepository {
     })
   }
 
-  async patch({ id, message, gender }: { id: string; message?: string; gender?: Gender }): Promise<Lead> {
+  async patch({
+    id,
+    message,
+    gender,
+    companyName,
+    countryCode,
+    jobTitle,
+    email,
+    firstName,
+    lastName,
+  }: {
+    id: string
+    message?: string
+    gender?: Gender
+    companyName?: string
+    countryCode?: string
+    jobTitle?: string
+    email?: string
+    firstName?: string
+    lastName?: string
+  }): Promise<Lead> {
     const data: {
       message?: string
       gender?: string
+      companyName?: string
+      countryCode?: string
+      jobTitle?: string
+      email?: string
+      firstName?: string
+      lastName?: string
     } = {}
 
     if (message) data.message = String(message)
     if (gender) data.gender = String(gender)
+    if (companyName) data.companyName = String(companyName)
+    if (countryCode) data.countryCode = String(countryCode)
+    if (jobTitle) data.jobTitle = String(jobTitle)
+    if (email) data.email = String(email)
+    if (firstName) data.firstName = String(firstName)
+    if (lastName) data.lastName = String(lastName)
 
     const lead = await prisma.lead.update({
       where: {
