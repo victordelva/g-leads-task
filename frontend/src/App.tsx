@@ -1,9 +1,9 @@
 import genesyLogo from './assets/genesy-ai-logo.svg'
-import { LeadsList } from './components/organisms/LeadsList.tsx'
+import { LeadsList } from './components/scenes/LeadsList.tsx'
 
 function App() {
   return (
-    <main className="max-w-[1280px] w-full my-0 p-2">
+    <main className="max-w-[1280px] mx-auto w-full my-0 p-2">
       <div className="flex items-center justify-center w-full text-center">
         <a href="https://genesy.ai" target="_blank">
           <img src={genesyLogo} className="logo genesy" alt="Genesy AI logo" />

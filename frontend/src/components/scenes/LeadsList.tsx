@@ -3,9 +3,9 @@ import { FC, useEffect, useState } from 'react'
 import { api } from '../../api'
 import { checkboxColumn, DataSheetGrid, keyColumn, textColumn } from 'react-datasheet-grid'
 import 'react-datasheet-grid/dist/style.css'
-import { selectColumn } from './DataGrid/Select/selectColumn.ts'
+import { selectColumn } from '../organisms/DataGrid/Select/selectColumn.ts'
 import { Lead } from '../../types/Lead.ts'
-import LeadsActionsBar from './LeadsActionsBar.tsx'
+import ActionsBar from '../atoms/ActionsBar.tsx'
 import { Button } from '../atoms/Button.tsx'
 import { useUIMessages } from '../../UIProvider.tsx'
 import MessageGenerationModal from './MessageGeneration/MessageGenerationModal.tsx'
@@ -182,13 +182,18 @@ export const LeadsList: FC = () => {
 
   return (
     <div>
-      <h2 className="lead-list-title">All leads</h2>
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="lead-list-title">All leads</h2>
+        <div>
+          <Button onClick={() => console.log('')}>Import new leads</Button>
+        </div>
+      </div>
       <MessageGenerationModal
         isActive={showMessageModal}
         leads={selectedLeads}
         onClose={() => onCloseMessageGeneration()}
       />
-      <LeadsActionsBar
+      <ActionsBar
         label={`Selected ${selectedLeads.length} of ${leadsData.length}`}
         actions={
           <>
