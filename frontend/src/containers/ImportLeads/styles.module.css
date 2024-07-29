@@ -1,6 +1,6 @@
 .invalid input,
 .invalid,
 .invalid select {
-    @apply bg-red-100;
-    --dsg-selection-border-color: #EF5353!important;
+  @apply bg-red-100;
+  --dsg-selection-border-color: #ef5353 !important;
 }
