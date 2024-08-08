@@ -2,7 +2,7 @@
 
 ## Overview
 
-This take-home assignment is designed to assess your skills as a Fullstack Developer with a focus on frontend development at Genesy AI.
+This take-home assignment is designed to assess your skills as a Fullstack Developer with a focus on frontend development at ble-ble.
 
 This assignment uses the same stack as our product, and the tasks are similar to what you would be working on if you join our team.
 
