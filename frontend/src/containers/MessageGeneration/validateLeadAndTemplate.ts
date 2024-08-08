@@ -14,6 +14,8 @@ export interface LeadValidation {
 }
 
 export function validateLeadsFields(leads: Lead[], template: string): LeadValidation {
+  // TODO validate email
+
   const templateFields = extractTemplateFields(template)
   const validations: ValidationLead[] = []
   leads.forEach((lead) => {
