@@ -1,4 +1,4 @@
-# Genesy AI Fullstack Developer | Take-Home Assignment C
+# Fullstack Developer | Take-Home Assignment C
 
 ## Overview
 
