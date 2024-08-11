@@ -1,6 +1,8 @@
 import { Gender } from './Gender'
+import { AggregatedRoot } from '../../../shared/Domain/Model/AggregatedRoot'
+import LeadCreated from '../Events/LeadCreated'
 
-export class Lead {
+export class Lead extends AggregatedRoot {
   id?: number
   firstName: string
   lastName?: string
@@ -32,6 +34,7 @@ export class Lead {
     gender?: Gender
     message?: string
   }) {
+    super()
     this.id = id
     this.firstName = firstName
     this.lastName = lastName
@@ -54,7 +57,7 @@ export class Lead {
     phoneNumber?: string
   }) {
     // We could add domain events here, for side effects after creating a lead
-    return new Lead({
+    const lead = new Lead({
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
@@ -62,6 +65,10 @@ export class Lead {
       countryCode: data.countryCode,
       companyName: data.companyName,
     })
+
+    lead.addEvent(new LeadCreated())
+
+    return lead
   }
 
   static fromPrisma(data: {
