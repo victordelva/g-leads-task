@@ -3,8 +3,8 @@ import CreateLeadUseCase from '../../../leads/Application/CreateLeadUseCase'
 import { ImportLeadData } from '../../Domain/Model/ImportLeadData'
 
 export default class LeadsBusRepository implements LeadRepository {
-  // this is obviously too simple for this separation, but it's just an example
-  // Would we separate the context for leads and imports?
+  // Simplified implementation of the bus to make it work.
+  // We would use EventBus from Shared context for publishing event
   constructor(private createLeadUseCase: CreateLeadUseCase) {}
 
   async create(data: ImportLeadData): Promise<void> {
