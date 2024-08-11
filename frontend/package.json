@@ -11,6 +11,7 @@
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "preview": "vite preview",
     "format": "prettier --write .",
+    "test": "jest",
     "format:check": "prettier --check ."
   },
   "dependencies": {
@@ -29,6 +30,7 @@
     "ts-toolbelt": "^9.6.0"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.12",
     "@types/lodash": "^4.17.7",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
@@ -38,9 +40,11 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
+    "jest": "^29.7.0",
     "postcss": "^8.4.40",
     "prettier": "^3.3.3",
     "tailwindcss": "^3.4.7",
+    "ts-jest": "^29.2.4",
     "typescript": "^5.2.2",
     "vite": "^5.3.4"
   }
