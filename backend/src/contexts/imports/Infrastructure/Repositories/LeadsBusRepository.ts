@@ -8,7 +8,7 @@ export default class LeadsBusRepository implements LeadRepository {
   constructor(private createLeadUseCase: CreateLeadUseCase) {}
 
   async create(data: ImportLeadData): Promise<void> {
-    // for complex cases we would dispatch a Command that execute this use case and an Event.
+    // for complex cases we would dispatch a CommandInterface that execute this use case and an Event.
     await this.createLeadUseCase.execute({
       ...data.toObject(),
     })
