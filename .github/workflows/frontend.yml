@@ -44,3 +44,7 @@ jobs:
       - name: Format check
         run: npm run format:check
         working-directory: ./frontend
+
+      - name: Test
+        run: npm run test
+        working-directory: ./frontend
